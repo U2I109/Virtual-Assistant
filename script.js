@@ -7,6 +7,12 @@ function appendMessage(sender, message) {
   chatBox.appendChild(div);
 }
 
+// ✅ Function to make Mark talk back
+function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(utterance);
+}
+
 // Check for browser support
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
@@ -26,8 +32,12 @@ recognition.onresult = (event) => {
 
   if (transcript.toLowerCase().startsWith("hey mark")) {
     const command = transcript.toLowerCase().replace("hey mark", "").trim();
-    appendMessage("Mark", `Got it! "${command}" will be processed.`);
+    const response = `Got it! "${command}" will be processed.`;
+    appendMessage("Mark", response);
+    speak(response); // Mark talks back
   } else {
-    appendMessage("Mark", "Say 'Hey Mark' to activate me.");
+    const response = "Say 'Hey Mark' to activate me.";
+    appendMessage("Mark", response);
+    speak(response); // Mark corrects you out loud
   }
 };
