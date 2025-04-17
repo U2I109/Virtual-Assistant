@@ -40,16 +40,16 @@ recognition.onresult = (event) => {
 
 function handleCommand(command) {
   const dateRegex = /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2}(st|nd|rd|th)?\b/i;
-  const timeRegex = /\b\d{1,2}(:\d{2})?\s?(am|pm)\b/i;
-  const aboutRegex = /remind me (about|of)? (.+?) (on|at)/i;
+  const timeRegex = /\b\d{1,2}(:\d{2})?\s?(a\.?m\.?|p\.?m\.?)\b/i;
+  const aboutRegex = /remind me (about|of|to)? (.+?) (on|at|by)?/i;
 
-  const dateMatch = command.match(dateRegex);
-  const timeMatch = command.match(timeRegex);
+  const eventDateMatch = command.match(dateRegex);
+  const eventTimeMatch = command.match(timeRegex);
   const aboutMatch = command.match(aboutRegex);
 
-  const eventDate = dateMatch ? dateMatch[0] : null;
-  const eventTime = timeMatch ? timeMatch[0] : null;
-  const eventName = aboutMatch ? aboutMatch[2] : null;
+  const eventDate = eventDateMatch ? eventDateMatch[0].replace(/(st|nd|rd|th)/i, '') : null;
+  const eventTime = eventTimeMatch ? eventTimeMatch[0].replace(/\./g, '') : null;
+  const eventName = aboutMatch ? aboutMatch[2].trim() : null;
 
   if (eventName && eventDate && eventTime) {
     const fullEvent = `${eventName} on ${eventDate} at ${eventTime}`;
@@ -59,7 +59,6 @@ function handleCommand(command) {
     appendMessage("Mark", response);
     speak(response);
   } else {
-    // Smart assistant follow-up
     let followUp = "Hmm, I didn't catch that. ";
     if (!eventName) followUp += "What should I remind you about? ";
     if (!eventDate) followUp += "What date is it for? ";
