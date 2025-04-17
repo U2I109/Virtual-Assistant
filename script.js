@@ -1,5 +1,6 @@
 const startBtn = document.getElementById("startBtn");
 const chatBox = document.getElementById("chatBox");
+const eventList = document.getElementById("eventList");
 
 function appendMessage(sender, message) {
   const div = document.createElement("div");
@@ -7,13 +8,13 @@ function appendMessage(sender, message) {
   chatBox.appendChild(div);
 }
 
-// ✅ Function to make Mark talk back
+// ✅ Mark talks back
 function speak(text) {
   const utterance = new SpeechSynthesisUtterance(text);
   speechSynthesis.speak(utterance);
 }
 
-// Check for browser support
+// 🎤 Voice Recognition Setup
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
@@ -34,10 +35,12 @@ recognition.onresult = (event) => {
     const command = transcript.toLowerCase().replace("hey mark", "").trim();
     const response = `Got it! "${command}" will be processed.`;
     appendMessage("Mark", response);
-    speak(response); // Mark talks back
+    speak(response);
+
+    // ✅ Soon: We'll extract date/time & add to calendar here
   } else {
     const response = "Say 'Hey Mark' to activate me.";
     appendMessage("Mark", response);
-    speak(response); // Mark corrects you out loud
+    speak(response);
   }
 };
