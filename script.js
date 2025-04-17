@@ -8,13 +8,11 @@ function appendMessage(sender, message) {
   chatBox.appendChild(div);
 }
 
-// 🧠 Mark talks back
 function speak(text) {
   const utterance = new SpeechSynthesisUtterance(text);
   speechSynthesis.speak(utterance);
 }
 
-// 🎤 Voice recognition setup
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.continuous = false;
@@ -30,7 +28,7 @@ recognition.onresult = (event) => {
   const transcript = event.results[0][0].transcript;
   appendMessage("You", transcript);
 
-  if (transcript.toLowerCase().startsWith("hey mark")) {
+  if (transcript.toLowerCase().includes("hey mark")) {
     const command = transcript.toLowerCase().replace("hey mark", "").trim();
     handleCommand(command);
   } else {
@@ -40,31 +38,38 @@ recognition.onresult = (event) => {
   }
 };
 
-// 📅 Handle the actual command
 function handleCommand(command) {
-  // Very basic event detection (example: "remind me about pizza on April 20 at 6 PM")
-  const eventPattern = /remind me about (.+?) on (\w+ \d{1,2}) at (\d{1,2}(:\d{2})?\s?(am|pm))/i;
-  const match = command.match(eventPattern);
+  const dateRegex = /\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2}(st|nd|rd|th)?\b/i;
+  const timeRegex = /\b\d{1,2}(:\d{2})?\s?(am|pm)\b/i;
+  const aboutRegex = /remind me (about|of)? (.+?) (on|at)/i;
 
-  if (match) {
-    const eventName = match[1];
-    const eventDate = match[2];
-    const eventTime = match[3];
+  const dateMatch = command.match(dateRegex);
+  const timeMatch = command.match(timeRegex);
+  const aboutMatch = command.match(aboutRegex);
 
+  const eventDate = dateMatch ? dateMatch[0] : null;
+  const eventTime = timeMatch ? timeMatch[0] : null;
+  const eventName = aboutMatch ? aboutMatch[2] : null;
+
+  if (eventName && eventDate && eventTime) {
     const fullEvent = `${eventName} on ${eventDate} at ${eventTime}`;
     addEventToCalendar(fullEvent);
 
-    const response = `Event "${eventName}" scheduled for ${eventDate} at ${eventTime}.`;
+    const response = `Got it! "${eventName}" on ${eventDate} at ${eventTime} has been scheduled.`;
     appendMessage("Mark", response);
     speak(response);
   } else {
-    const response = "Sorry, I didn’t understand. Try saying something like 'Remind me about the dentist on April 20 at 10 AM.'";
-    appendMessage("Mark", response);
-    speak(response);
+    // Smart assistant follow-up
+    let followUp = "Hmm, I didn't catch that. ";
+    if (!eventName) followUp += "What should I remind you about? ";
+    if (!eventDate) followUp += "What date is it for? ";
+    if (!eventTime) followUp += "What time should I remind you? ";
+
+    appendMessage("Mark", followUp);
+    speak(followUp);
   }
 }
 
-// 🗓️ Add event to the calendar list
 function addEventToCalendar(eventText) {
   if (eventList.querySelector("li")?.textContent === "No events yet.") {
     eventList.innerHTML = "";
