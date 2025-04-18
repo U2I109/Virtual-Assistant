@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AI Personal Assistant</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Talk to Mark</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <h1>Talk to Mark 🎙️</h1>
+  <p id="status">System: Listening for 'Hey Mark'...</p>
+  <button onclick="startListening()">🎤 Start Talking</button>
+  <p><strong>You:</strong> <span id="userSpeech"></span></p>
+  <p><strong>Mark:</strong> <span id="markReply"></span></p>
 
-  <div id="chatBox"></div>
-  <button id="startBtn">Talk to Mark</button>
-
-  <!-- 🗓️ Calendar Section -->
-  <div id="calendar">
-    <h3>📅 Upcoming Events</h3>
-    <ul id="eventList">
-      <li>No events yet.</li>
-    </ul>
-  </div>
+  <h2>📅 Upcoming Events</h2>
+  <ul id="eventList"></ul>
 
   <script src="script.js"></script>
 </body>
