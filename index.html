@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Talk to Mark</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Virtual Assistant - Mark</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Talk to Mark 🎙️</h1>
-  <p id="status">System: Listening for 'Hey Mark'...</p>
-  <button onclick="startListening()">🎤 Start Talking</button>
-  <p><strong>You:</strong> <span id="userSpeech"></span></p>
-  <p><strong>Mark:</strong> <span id="markReply"></span></p>
-
-  <h2>📅 Upcoming Events</h2>
-  <ul id="eventList"></ul>
-
+  <div class="container">
+    <h1>Talk to Mark 🎙️</h1>
+    <button id="start-btn">Start Talking</button>
+    <p id="status">System: Listening for 'Hey Mark'...</p>
+    <div id="response"></div>
+    <h2>📅 Upcoming Events</h2>
+    <ul id="events"></ul>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
