@@ -1,56 +1,51 @@
-const REPLIT_BACKEND_URL = "https://01508006-cfdc-4454-b868-bab761f6dad0-00-goqvkypa4isl.spock.replit.dev";
-
-const synth = window.speechSynthesis;
+const button = document.getElementById("talk-button");
+const status = document.getElementById("status");
+const eventsList = document.getElementById("events");
 
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.continuous = false;
-recognition.lang = 'en-US';
+recognition.lang = "en-US";
 recognition.interimResults = false;
 
-document.getElementById('talk-button').addEventListener('click', () => {
-  document.getElementById('response').innerText = 'System: Listening for "Hey Mark"...';
+const speak = (message) => {
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(message);
+  synth.speak(utterance);
+};
+
+button.addEventListener("click", () => {
+  status.textContent = "🎙️ Listening for 'Hey Mark'...";
   recognition.start();
 });
 
-recognition.onresult = function (event) {
+recognition.onresult = async (event) => {
   const transcript = event.results[0][0].transcript.toLowerCase();
-  document.getElementById('response').innerText = `You: ${transcript}`;
-  
-  fetch(REPLIT_BACKEND_URL + '/process', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ text: transcript })
-  })
-  .then(response => response.json())
-  .then(data => {
-    const responseText = data.reply;
-    document.getElementById('response').innerText = `Mark: ${responseText}`;
+  status.textContent = "🤖 Thinking...";
 
-    // 🔊 Make Mark speak
-    const utterance = new SpeechSynthesisUtterance(responseText);
-    utterance.voice = speechSynthesis.getVoices().find(voice => voice.name.includes('Google') || voice.name.includes('Microsoft') || voice.default);
-    utterance.pitch = 1;
-    utterance.rate = 1;
-    speechSynthesis.speak(utterance);
+  try {
+    const response = await fetch("https://01508006-cfdc-4454-b868-bab761f6dad0-00-goqvkypa4isl.spock.replit.dev/process", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: transcript })
+    });
 
-    if (data.events) {
-      updateEventList(data.events);
+    const data = await response.json();
+
+    if (data.reply) {
+      speak(data.reply);
     }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    document.getElementById('response').innerText = 'Mark: Sorry, I had trouble processing that.';
-  });
+
+    if (data.events && Array.isArray(data.events)) {
+      eventsList.innerHTML = data.events.map(event => `<li>${event}</li>`).join("");
+    }
+
+    status.textContent = "✅ Mark responded.";
+  } catch (error) {
+    console.error("Error:", error);
+    status.textContent = "⚠️ Failed to reach Mark.";
+    speak("Sorry, I had trouble reaching the server.");
+  }
 };
 
-function updateEventList(events) {
-  const eventList = document.getElementById('event-list');
-  eventList.innerHTML = '';
-  events.forEach(event => {
-    const li = document.createElement('li');
-    li.textContent = event;
-    eventList.appendChild(li);
-  });
-}
+recognition.onerror = (event) => {
+  status.textContent = `⚠️ Error: ${event.error}`;
+};
