@@ -3,7 +3,7 @@ const status = document.getElementById("status");
 const response = document.getElementById("response");
 const events = document.getElementById("events");
 
-const backendURL = "https://01508006-cfdc-4454-b868-bab761f6dad0-00-goqvkypa4isl.spock.replit.dev/process";
+const backendURL = "https://01508006-cfdc-4454-b868-bab761f6dad0-00-goqvkypa4isl.spock.replit.dev";
 
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.lang = "en-US";
@@ -19,7 +19,7 @@ recognition.onresult = async (event) => {
   status.textContent = `Heard: "${userSpeech}"`;
 
   try {
-    const res = await fetch(backendURL, {
+    const res = await fetch(`${backendURL}/process`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ input: userSpeech })
