@@ -23,7 +23,7 @@ recognition.onresult = async (event) => {
     const res = await fetch(backendURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input: userSpeech })
+      body: JSON.stringify({ message: userSpeech })
     });
 
     const data = await res.json();
