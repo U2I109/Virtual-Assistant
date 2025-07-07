@@ -24,9 +24,10 @@ recognition.onresult = async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ input: userSpeech })
     });
-    const data = await res.json();
 
+    const data = await res.json();
     response.textContent = data.reply;
+
     const utter = new SpeechSynthesisUtterance(data.reply);
     speechSynthesis.speak(utter);
 
